@@ -7,14 +7,14 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const xcode = require('xcode');
-const log = require('npmlog');
-const groupFilesByType = require('../groupFilesByType');
-const createGroupWithMessage = require('./createGroupWithMessage');
-const getPlist = require('./getPlist');
-const writePlist = require('./writePlist');
+const fs = require("fs-extra");
+const path = require("path");
+const xcode = require("@raydeck/xcode");
+const log = require("npmlog");
+const groupFilesByType = require("../groupFilesByType");
+const createGroupWithMessage = require("./createGroupWithMessage");
+const getPlist = require("./getPlist");
+const writePlist = require("./writePlist");
 
 /**
  * This function works in a similar manner to its Android version,
@@ -25,17 +25,16 @@ module.exports = function linkAssetsIOS(files, projectConfig) {
   const assets = groupFilesByType(files);
   const plist = getPlist(project, projectConfig.sourceDir);
 
-  createGroupWithMessage(project, 'Resources');
+  createGroupWithMessage(project, "Resources");
 
   function addResourceFile(f) {
     return (f || [])
       .map(asset =>
-        project.addResourceFile(
-          path.relative(projectConfig.sourceDir, asset),
-          { target: project.getFirstTarget().uuid }
-        )
+        project.addResourceFile(path.relative(projectConfig.sourceDir, asset), {
+          target: project.getFirstTarget().uuid
+        })
       )
-      .filter(file => file)   // xcode returns false if file is already there
+      .filter(file => file) // xcode returns false if file is already there
       .map(file => file.basename);
   }
 
@@ -43,14 +42,11 @@ module.exports = function linkAssetsIOS(files, projectConfig) {
 
   const fonts = addResourceFile(assets.font);
 
-  const existingFonts = (plist.UIAppFonts || []);
+  const existingFonts = plist.UIAppFonts || [];
   const allFonts = [...existingFonts, ...fonts];
   plist.UIAppFonts = Array.from(new Set(allFonts)); // use Set to dedupe w/existing
 
-  fs.writeFileSync(
-    projectConfig.pbxprojPath,
-    project.writeSync()
-  );
+  fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 
   writePlist(project, projectConfig.sourceDir, plist);
 };

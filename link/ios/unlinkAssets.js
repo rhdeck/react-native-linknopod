@@ -7,14 +7,14 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const xcode = require('xcode');
-const log = require('npmlog');
-const groupFilesByType = require('../groupFilesByType');
-const getPlist = require('./getPlist');
-const writePlist = require('./writePlist');
-const difference = require('lodash').difference;
+const fs = require("fs-extra");
+const path = require("path");
+const xcode = require("@raydeck/xcode");
+const log = require("npmlog");
+const groupFilesByType = require("../groupFilesByType");
+const getPlist = require("./getPlist");
+const writePlist = require("./writePlist");
+const difference = require("lodash").difference;
 
 /**
  * Unlinks assets from iOS project. Removes references for fonts from `Info.plist`
@@ -27,19 +27,19 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
 
   if (!plist) {
     return log.error(
-      'ERRPLIST',
-      'Could not locate Info.plist file. Check if your project has \'INFOPLIST_FILE\' set properly'
+      "ERRPLIST",
+      "Could not locate Info.plist file. Check if your project has 'INFOPLIST_FILE' set properly"
     );
   }
 
-  if (!project.pbxGroupByName('Resources')) {
+  if (!project.pbxGroupByName("Resources")) {
     return log.error(
-      'ERRGROUP',
-      'Group \'Resources\' does not exist in your Xcode project. There is nothing to unlink.'
+      "ERRGROUP",
+      "Group 'Resources' does not exist in your Xcode project. There is nothing to unlink."
     );
   }
 
-  const removeResourceFile = function (f) {
+  const removeResourceFile = function(f) {
     (f || [])
       .map(asset =>
         project.removeResourceFile(
@@ -56,10 +56,7 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
 
   plist.UIAppFonts = difference(plist.UIAppFonts || [], fonts);
 
-  fs.writeFileSync(
-    projectConfig.pbxprojPath,
-    project.writeSync()
-  );
+  fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 
   writePlist(project, projectConfig.sourceDir, plist);
 };

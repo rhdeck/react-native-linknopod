@@ -7,31 +7,37 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-const xcode = require('xcode');
-const path = require('path');
-const fs = require('fs');
-const difference = require('lodash').difference;
-const isEmpty = require('lodash').isEmpty;
+const xcode = require("@raydeck/xcode");
+const path = require("path");
+const fs = require("fs");
+const difference = require("lodash").difference;
+const isEmpty = require("lodash").isEmpty;
 
-const getGroup = require('./getGroup');
-const getProducts = require('./getProducts');
-const getTargets = require('./getTargets');
-const getHeadersInFolder = require('./getHeadersInFolder');
-const getHeaderSearchPath = require('./getHeaderSearchPath');
-const removeProjectFromProject = require('./removeProjectFromProject');
-const removeProjectFromLibraries = require('./removeProjectFromLibraries');
-const removeFromStaticLibraries = require('./removeFromStaticLibraries');
-const removeFromHeaderSearchPaths = require('./removeFromHeaderSearchPaths');
-const removeSharedLibraries = require('./removeSharedLibraries');
+const getGroup = require("./getGroup");
+const getProducts = require("./getProducts");
+const getTargets = require("./getTargets");
+const getHeadersInFolder = require("./getHeadersInFolder");
+const getHeaderSearchPath = require("./getHeaderSearchPath");
+const removeProjectFromProject = require("./removeProjectFromProject");
+const removeProjectFromLibraries = require("./removeProjectFromLibraries");
+const removeFromStaticLibraries = require("./removeFromStaticLibraries");
+const removeFromHeaderSearchPaths = require("./removeFromHeaderSearchPaths");
+const removeSharedLibraries = require("./removeSharedLibraries");
 
 /**
  * Unregister native module IOS
  *
  * If library is already unlinked, this action is a no-op.
  */
-module.exports = function unregisterNativeModule(dependencyConfig, projectConfig, iOSDependencies) {
+module.exports = function unregisterNativeModule(
+  dependencyConfig,
+  projectConfig,
+  iOSDependencies
+) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
-  const dependencyProject = xcode.project(dependencyConfig.pbxprojPath).parseSync();
+  const dependencyProject = xcode
+    .project(dependencyConfig.pbxprojPath)
+    .parseSync();
 
   const libraries = getGroup(project, projectConfig.libraryFolder);
 
@@ -44,7 +50,7 @@ module.exports = function unregisterNativeModule(dependencyConfig, projectConfig
 
   getTargets(dependencyProject).forEach(target => {
     removeFromStaticLibraries(project, target.name, {
-      target: project.getFirstTarget().uuid,
+      target: project.getFirstTarget().uuid
     });
   });
 
@@ -66,8 +72,5 @@ module.exports = function unregisterNativeModule(dependencyConfig, projectConfig
     );
   }
 
-  fs.writeFileSync(
-    projectConfig.pbxprojPath,
-    project.writeSync()
-  );
+  fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 };

@@ -7,22 +7,22 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-const xcode = require('xcode');
-const fs = require('fs');
-const path = require('path');
-const log = require('npmlog');
+const xcode = require("@raydeck/xcode");
+const fs = require("fs");
+const path = require("path");
+const log = require("npmlog");
 
-const addToHeaderSearchPaths = require('./addToHeaderSearchPaths');
-const getHeadersInFolder = require('./getHeadersInFolder');
-const getHeaderSearchPath = require('./getHeaderSearchPath');
-const getProducts = require('./getProducts');
-const getTargets = require('./getTargets');
-const createGroupWithMessage = require('./createGroupWithMessage');
-const addFileToProject = require('./addFileToProject');
-const addProjectToLibraries = require('./addProjectToLibraries');
-const addSharedLibraries = require('./addSharedLibraries');
-const isEmpty = require('lodash').isEmpty;
-const getGroup = require('./getGroup');
+const addToHeaderSearchPaths = require("./addToHeaderSearchPaths");
+const getHeadersInFolder = require("./getHeadersInFolder");
+const getHeaderSearchPath = require("./getHeaderSearchPath");
+const getProducts = require("./getProducts");
+const getTargets = require("./getTargets");
+const createGroupWithMessage = require("./createGroupWithMessage");
+const addFileToProject = require("./addFileToProject");
+const addProjectToLibraries = require("./addProjectToLibraries");
+const addSharedLibraries = require("./addSharedLibraries");
+const isEmpty = require("lodash").isEmpty;
+const getGroup = require("./getGroup");
 
 /**
  * Register native module IOS adds given dependency to project by adding
@@ -31,11 +31,19 @@ const getGroup = require('./getGroup');
  *
  * If library is already linked, this action is a no-op.
  */
-module.exports = function registerNativeModuleIOS(dependencyConfig, projectConfig) {
+module.exports = function registerNativeModuleIOS(
+  dependencyConfig,
+  projectConfig
+) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
-  const dependencyProject = xcode.project(dependencyConfig.pbxprojPath).parseSync();
+  const dependencyProject = xcode
+    .project(dependencyConfig.pbxprojPath)
+    .parseSync();
 
-  const libraries = createGroupWithMessage(project, projectConfig.libraryFolder);
+  const libraries = createGroupWithMessage(
+    project,
+    projectConfig.libraryFolder
+  );
   const file = addFileToProject(
     project,
     path.relative(projectConfig.sourceDir, dependencyConfig.projectPath)
@@ -48,8 +56,8 @@ module.exports = function registerNativeModuleIOS(dependencyConfig, projectConfi
   getTargets(dependencyProject).forEach(product => {
     var i;
     if (!product.isTVOS) {
-      for (i=0; i<targets.length; i++) {
-        if(!targets[i].isTVOS) {
+      for (i = 0; i < targets.length; i++) {
+        if (!targets[i].isTVOS) {
           project.addStaticLibrary(product.name, {
             target: targets[i].uuid
           });
@@ -58,8 +66,8 @@ module.exports = function registerNativeModuleIOS(dependencyConfig, projectConfi
     }
 
     if (product.isTVOS) {
-      for (i=0; i<targets.length; i++) {
-        if(targets[i].isTVOS) {
+      for (i = 0; i < targets.length; i++) {
+        if (targets[i].isTVOS) {
           project.addStaticLibrary(product.name, {
             target: targets[i].uuid
           });
@@ -78,8 +86,5 @@ module.exports = function registerNativeModuleIOS(dependencyConfig, projectConfi
     );
   }
 
-  fs.writeFileSync(
-    projectConfig.pbxprojPath,
-    project.writeSync()
-  );
+  fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 };

@@ -7,9 +7,9 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-const xcode = require('xcode');
-const getGroup = require('./getGroup');
-const hasLibraryImported = require('./hasLibraryImported');
+const xcode = require("@raydeck/xcode");
+const getGroup = require("./getGroup");
+const hasLibraryImported = require("./hasLibraryImported");
 
 /**
  * Returns true if `xcodeproj` specified by dependencyConfig is present

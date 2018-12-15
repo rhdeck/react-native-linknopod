@@ -29,6 +29,6 @@
     "inquirer": "^5.2.0",
     "lodash": "^4.17.5",
     "npmlog": "^4.1.2",
-    "xcode": "rhdeck/cordova-node-xcode"
+    "@raydeck/xcode": "^2.2.0"
   }
 }
