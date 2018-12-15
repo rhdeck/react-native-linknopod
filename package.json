@@ -1,6 +1,6 @@
 {
   "name": "react-native-linknopod",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "RN Linker that will not link Pods",
   "main": "cli.js",
   "scripts": {
